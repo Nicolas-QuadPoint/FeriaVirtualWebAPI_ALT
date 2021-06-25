@@ -13,6 +13,7 @@ const apiRoutes = APIRoutes();
 const webRoutes = WebRoutes();
 const infoRoutes = InfoRoutes();
 const authRoutes = AuthRoutes();
+const puertoServidor = process.env.PORT || 3000;
 
 /* https://stackoverflow.com/a/62892482 */
 const __dirname = URL.fileURLToPath(import.meta.url);
@@ -51,4 +52,4 @@ app.all(/^\/api\/v1\/(?!info|auth).{1,}$/, AuthAutenticationService.checkAutenti
 app.use('/api/v1',apiRoutes);
 
 //Init the server
-app.listen(3000,() => console.log('FeriaVirtual WebAPI - Servidor iniciado en puerto %d!',3000));
+app.listen(puertoServidor,() => console.log('FeriaVirtual WebAPI - Servidor iniciado en puerto %d!',3000));
