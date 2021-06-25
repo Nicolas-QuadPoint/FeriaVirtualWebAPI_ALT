@@ -1,7 +1,7 @@
 import express from 'express';
 import Path from 'path';
 import URL from 'url';
-import DotEnv from 'dotenv';
+//import DotEnv from 'dotenv';
 import AuthRoutes from './routes/auth.routes.js';
 import InfoRoutes from './routes/api.public.routes.js';
 import WebRoutes from './routes/web.routes.js';
@@ -18,7 +18,7 @@ const authRoutes = AuthRoutes();
 const __dirname = URL.fileURLToPath(import.meta.url);
 
 //Configuring enviromental values
-DotEnv.config();
+//DotEnv.config();
 
 
 //Public resources - Todo debajo de la carpeta indicada,
