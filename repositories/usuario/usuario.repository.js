@@ -143,7 +143,7 @@ function UsuarioRepository(conexion){
                 var parametros = {
                     
                     idUsuario:{ name:'idUsuario', type: ConexionBD.dbTypes.INT, val: usuarioid, dir: ConexionBD.dbTypes.IN },
-                    datos_usuario:{name:'datos_usuario', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT }
+                    datos_usuario:{name:'datos_usuario', type: Ora.DB_TYPE_CURSOR, dir: ConexionBD.dbTypes.OUT }
                 };
                 
                 bd.executeStoredProcedure('BUSCAR_USUARIO_ID', parametros,{},
@@ -243,7 +243,7 @@ function UsuarioRepository(conexion){
 
             var bd = new ConexionBD();
 			var parametros = {
-				datos_usuario:{name:'datos_usuario', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT }
+				datos_usuario:{name:'datos_usuario', type: Ora.DB_TYPE_CURSOR, dir: ConexionBD.dbTypes.OUT }
 			};
 
             bd.executeStoredProcedure('OBTENER_USUARIO_SP', parametros,{},

@@ -115,9 +115,6 @@ function AuthRepository(conexion){
                             res.status(500).json( new DatabaseErrorException() );
 
                         } else if(result && result.outBinds){
-                            
-							console.log(result);
-							console.log(result.outBinds);
 							
                             let cursor_datos_usuario = result.outBinds.datos_usuario;
                             cursor_datos_usuario.getRows(1,function(err,fila_usuario){
