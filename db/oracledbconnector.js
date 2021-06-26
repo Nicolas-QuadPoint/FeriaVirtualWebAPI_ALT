@@ -1,25 +1,35 @@
 //Importing modules
 import Ora from 'oracledb';
-import dotenv from 'dotenv';
+//import dotenv from 'dotenv';
 import DBConnector from './dbconnector.js';
+
+/*
 
 //Configuring enviromental values
 dotenv.config();
-
 //Check for early errors
 if(dotenv.error){
     throw dotenv.error;
 }
+*/
 
 //Con esto, los resultados serán mostrados como Arrays.
 //Si quieres objetos JSON, entonces pon OUT_FORMAT_OBJECT
 Ora.outFormat = Ora.OUT_FORMAT_ARRAY;
 
 // Información de conector para una base de datos Oracle.
+/*
 const oraconfig = {
     user          : process.env.DB_USER,
     password      : process.env.DB_USER_PASSWD,
     connectString : process.env.DB_SERVER
+};
+*/
+
+const oraconfig = {
+    user          : process.env.FVWAPI_DB_SERVER,
+    password      : process.env.FVWAPI_DB_USER,
+    connectString : process.env.FVWAPI_DB_SERVER
 };
 
 

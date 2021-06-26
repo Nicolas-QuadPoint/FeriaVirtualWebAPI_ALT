@@ -12,9 +12,10 @@ import { DatabaseErrorException,
 
 
 /* Para creacion de tokens de autenticacion!!! */
-import DotEnv from 'dotenv';
+//import DotEnv from 'dotenv';
 import JWT from 'jsonwebtoken';
 
+/*
 //Configuring enviromental values
 DotEnv.config();
 
@@ -22,6 +23,7 @@ DotEnv.config();
 if(DotEnv.error){
     throw DotEnv.error;
 }
+*/
 
 
 /**
@@ -58,7 +60,7 @@ function checkAutenticatedToken(req,res,next){
     if(token){
 
         //Hay token en las cabeceras de la peticion, vamos a desencriptarlo!!
-        JWT.verify(token,process.env.WEBTOKEN_SECRET_KEY,function(err,dec){
+        JWT.verify(token,process.env.FVWAPI_WEBTOKEN_SECRET_KEY,function(err,dec){
 
             if(err){
                 

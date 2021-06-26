@@ -1,7 +1,7 @@
 import express from 'express';
 import Path from 'path';
 import URL from 'url';
-import DotEnv from 'dotenv';
+//import DotEnv from 'dotenv';
 import AuthRoutes from './routes/auth.routes.js';
 import InfoRoutes from './routes/api.public.routes.js';
 import WebRoutes from './routes/web.routes.js';
@@ -13,18 +13,30 @@ const apiRoutes = APIRoutes();
 const webRoutes = WebRoutes();
 const infoRoutes = InfoRoutes();
 const authRoutes = AuthRoutes();
+const puertoServidor = process.env.PORT || 3000;
 
-/* https://stackoverflow.com/a/62892482 */
-const __dirname = URL.fileURLToPath(import.meta.url);
 
 //Configuring enviromental values
-DotEnv.config();
+//DotEnv.config();
+
+function configurarServidorLocal(){
+  
+  /* https://stackoverflow.com/a/62892482 */
+  let __dirname = URL.fileURLToPath(import.meta.url);
+  
+  //Public resources - Todo debajo de la carpeta indicada,
+  //sera de acceso publico para el usuario
+  app.use(express.static(Path.join(__dirname, '../public')));
+  app.set('views', Path.join(__dirname, '../views'));
+}
+
+function configurarServidorNube(){
+  app.use(express.static('./public')));
+  app.set('views','./views'));
+}
 
 
-//Public resources - Todo debajo de la carpeta indicada,
-//sera de acceso publico para el usuario
-app.use(express.static(Path.join(__dirname, '../public')));
-app.set('views', Path.join(__dirname, '../views'));
+configurarServidorNube();
 
 //Usamos las cookies
 //app.use(cookieParser());
@@ -51,4 +63,4 @@ app.all(/^\/api\/v1\/(?!info|auth).{1,}$/, AuthAutenticationService.checkAutenti
 app.use('/api/v1',apiRoutes);
 
 //Init the server
-app.listen(3000,() => console.log('FeriaVirtual WebAPI - Servidor iniciado en puerto %d!',3000));
+app.listen(puertoServidor,() => console.log('FeriaVirtual WebAPI - Servidor iniciado en puerto %d!',3000));
