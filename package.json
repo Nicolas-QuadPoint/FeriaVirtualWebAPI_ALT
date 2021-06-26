@@ -1,7 +1,7 @@
 {
-  "name": "feriavirtual-api",
+  "name": "feriavirtual-api-alt",
   "version": "1.0.0",
-  "description": "API Web para utlizarse en la aplicacion FeriaVirtualMóvil y FeriaVirtualWeb,\r  escrito para Node.JS.",
+  "description": "Modificacion de FeriaVirtualAPI para funcionar con otra fuente de datos",
   "main": "app.js",
   "type": "module",
   "scripts": {
