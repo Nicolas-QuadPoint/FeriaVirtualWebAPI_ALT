@@ -118,12 +118,12 @@ function AuthRepository(conexion){
                         } else if(result && result.outBinds){
 							
                             let cursor_datos_usuario = result.outBinds.datos_usuario;
-                            cursor_datos_usuario.getRows(1,function(err,fila_usuario){
+                            cursor_datos_usuario.getRows(1,function(e,fila_usuario){
                                 
                                 console.log(fila_usuario);
 								
-								if(err){
-									res.status(500).json(new DatabaseErrorException());
+								if(e){
+									res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
 								}
                                 else if(fila_usuario[0]){
                             
