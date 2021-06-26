@@ -42,64 +42,7 @@ function UsuarioRepository(conexion){
 
         try {
 
-            var u = new Usuario();
-            u.clone(req.body);
-
-            if(u.validate()) {
-
-                console.log('El objeto Usuario es válido!');
-
-                var bd = new ConexionBD();
-                var succ = 0;
-
-                var parametros = {
-                    usu_personalID :{ name:'idUsuario', type: ConexionBD.dbTypes.VARCHAR, val: u.personal_id, dir: ConexionBD.dbTypes.IN },
-                    usu_nombre :{ name:'usu_nombre', type: ConexionBD.dbTypes.VARCHAR, val: u.nombre, dir: ConexionBD.dbTypes.IN },
-                    usu_nombreSegundo :{ name:'usu_nombreSegundo', type: ConexionBD.dbTypes.VARCHAR, val: u.nombre_segundo, dir: ConexionBD.dbTypes.IN },
-                    usu_apellidoPat :{ name:'usu_apellidoPat', type: ConexionBD.dbTypes.VARCHAR, val: u.apellido_paterno, dir: ConexionBD.dbTypes.IN },
-                    usu_apellidoMat :{ name:'usu_apellidoMat', type: ConexionBD.dbTypes.VARCHAR, val: u.apellido_materno, dir: ConexionBD.dbTypes.IN },
-                    usu_fechanac :{ name:'usu_fechanac', type: ConexionBD.dbTypes.VARCHAR, val: u.fecha_nacimiento, dir: ConexionBD.dbTypes.IN },
-                    usu_telefono :{ name:'usu_telefono', type: ConexionBD.dbTypes.INT, val: u.telefono, dir: ConexionBD.dbTypes.IN },
-                    usu_direccion :{ name:'usu_direccion', type: ConexionBD.dbTypes.VARCHAR, val: u.direccion, dir: ConexionBD.dbTypes.IN },
-                    usu_email :{ name:'usu_email', type: ConexionBD.dbTypes.VARCHAR, val: u.email, dir: ConexionBD.dbTypes.IN },
-                    usu_passwd :{ name:'usu_passwd', type: ConexionBD.dbTypes.VARCHAR, val: u.contrasena, dir: ConexionBD.dbTypes.IN },
-                    usu_salt_passwd :{ name:'usu_salt_passwd', type: ConexionBD.dbTypes.VARCHAR, val: u.salt_contrasena, dir: ConexionBD.dbTypes.IN },
-                    usu_idNacionalidad :{ name:'usu_idNacionalidad', type: ConexionBD.dbTypes.INT, val: u.nacionalidad.id_nacionalidad, dir: ConexionBD.dbTypes.IN },
-                    usu_idRol :{ name:'usu_idRol', type: ConexionBD.dbTypes.INT, val: u.rol.id_rol, dir: ConexionBD.dbTypes.IN },
-                    usu_idEstadoUsuario :{ name:'usu_idEstadoUsuario', type: ConexionBD.dbTypes.INT, val: u.estado_usuario.id_estado_usuario, dir: ConexionBD.dbTypes.IN },
-                    exito :{ name:'exito', type: ConexionBD.dbTypes.INT, val: succ, dir: ConexionBD.dbTypes.INOUT }
-                };
-
-                bd.executeStoredProcedure(`pkg_usuario.proc_crear_usuario`,parametros,{},
-                    function(error,results){
-
-                        if(error){
-                            
-                            console.error(`Paso algo! ${error}`);
-                            res.status(500).json( new ex.DatabaseErrorException() );
-
-                        } else if (results && results.outBinds){
-                            
-                            var resultadoid = new ResultadoID();
-                            resultadoid.id_resultado = results.outBinds.exito;
-
-                            res.status(200).json( resultadoid );
-
-                        } else {
-
-                            res.status(500).json( new ex.DatabaseErrorException() );
-
-                        }
-
-                    }
-                );
-                    
-                
-
-            } else {
-                console.log('El objeto Usuario NO es válido!');
-                res.status(400).json( new ex.InvalidArgumentException() );
-            }
+            throw ex.MethodGoneException();
 
         } catch(e) {
 
@@ -129,8 +72,6 @@ function UsuarioRepository(conexion){
      */
     function interceptarUsuarioPorID(req,res,next){
 
-        console.log('Pasando por middleware interceptarUsuario!!');
-
         try {
 
             var bd = new ConexionBD();
@@ -142,8 +83,8 @@ function UsuarioRepository(conexion){
                 
                 var parametros = {
                     
-                    idUsuario:{ name:'idUsuario', type: ConexionBD.dbTypes.INT, val: usuarioid, dir: ConexionBD.dbTypes.IN },
-                    datos_usuario:{name:'datos_usuario', type: Ora.DB_TYPE_CURSOR, dir: ConexionBD.dbTypes.OUT }
+                    idUsuario:{ name:'idUsuario', type: Ora.NUMBER, val: usuarioid, dir: ConexionBD.dbTypes.IN },
+                    datos_usuario:{name:'datos_usuario', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT }
                 };
                 
                 bd.executeStoredProcedure('BUSCAR_USUARIO_ID', parametros,{},
@@ -166,7 +107,7 @@ function UsuarioRepository(conexion){
                             //Este cursor SIEMPRE tendrá una fila!
                             cursor_datos_usuario.getRows(1,function(err,fila_usuario){
                                 
-                                if(fila_usuario && fila_usuario[0]){
+                                if(fila_usuario[0]){
 
                                     /**
                                      * Aquí construyo el objeto de Ventas!!!
@@ -243,7 +184,7 @@ function UsuarioRepository(conexion){
 
             var bd = new ConexionBD();
 			var parametros = {
-				datos_usuario:{name:'datos_usuario', type: Ora.DB_TYPE_CURSOR, dir: ConexionBD.dbTypes.OUT }
+				datos_usuario:{name:'datos_usuario', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT }
 			};
 
             bd.executeStoredProcedure('OBTENER_USUARIO_SP', parametros,{},

@@ -101,8 +101,9 @@ function AuthRepository(conexion){
 
                 var parametros = {
                     
-                    usu_email:{ name:'email', type: ConexionBD.dbTypes.VARCHAR, val: emailUsuario, dir: ConexionBD.dbTypes.IN },
+                    usu_email:{ name:'usu_email', type: OracleDB.STRING, val: emailUsuario, dir: ConexionBD.dbTypes.IN },
                     datos_usuario:{ name:'datos_usuario', type: OracleDB.CURSOR, dir: ConexionBD.dbTypes.OUT }
+
                 };
 
                 bd.executeStoredProcedure('OBTENER_USUARIO_MAIL', parametros,{},
@@ -132,7 +133,7 @@ function AuthRepository(conexion){
                                     if(BCrypt.compareSync(req.body.contrasena, u.contrasena)){
                                     
 										console.log('Coinciden?');
-										var tokenUsuario = JWT.sign({id:u.id_usuario},process.env.WEBTOKEN_SECRET_KEY,{expiresIn:84600});
+										var tokenUsuario = JWT.sign({id:u.id_usuario},process.env.FVWAPI_WEBTOKEN_SECRET_KEY,{expiresIn:84600});
 										console.log({ token_usuario: tokenUsuario, usuario : u });
 										res.status(200).json( { token_usuario: tokenUsuario, usuario : u });
 

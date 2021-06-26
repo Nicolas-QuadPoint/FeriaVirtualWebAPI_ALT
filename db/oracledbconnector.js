@@ -34,8 +34,8 @@ const oraconfig = {
 function describeConnection(connection){
 	console.log(
 	`Objeto connection:
-		Current schema: ${connection.currentSchema}
-		Version: ${connection.oracleServerVersionString}`
+    Current schema: ${connection.currentSchema}
+    Version: ${connection.oracleServerVersionString}`
 	
 	);
 }
@@ -124,7 +124,7 @@ class OraDBConnector extends DBConnector{
 					//Aqui uso interpolacion de cadenas para simular un tipico bloque de ejecucion
 					//https://www.w3docs.com/snippets/javascript/how-to-do-string-interpolation-in-javascript.html
 					connection.execute(
-					   `BEGIN
+					   `BEGIN 
 							${spName}(${strparams});
 						END;`,
 						params,
@@ -154,18 +154,6 @@ class OraDBConnector extends DBConnector{
 					console.log(`Error en OracleDBConnector!: ${e}`);
 					callback(e,null);
 				} else {
-					
-					//Iterando por items del objeto
-					//https://attacomsian.com/blog/javascript-iterate-objects
-					for (const key in params) {
-						strparams = strparams.concat(`:${key},`);
-					}
-
-					//Quito la coma al final del string en caso de
-					//https://stackoverflow.com/a/36630251
-					strparams = strparams.replace(/.$/,"");                
-
-					console.log(`Params: ${strparams}`);
 
 					//Se ejecuta la accion
 					connection.execute(query,params,options,callback);
