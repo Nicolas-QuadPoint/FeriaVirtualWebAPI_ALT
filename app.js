@@ -21,12 +21,12 @@ DotEnv.config();
 function configurarServidorLocal(){
   
   /* https://stackoverflow.com/a/62892482 */
-  let __dirname = URL.fileURLToPath(import.meta.url);
+  //let __dirname = URL.fileURLToPath(import.meta.url);
   
   //Public resources - Todo debajo de la carpeta indicada,
   //sera de acceso publico para el usuario
-  app.use(express.static(Path.join(__dirname, '../public')));
-  app.set('views', Path.join(__dirname, '../views'));
+  //app.use(express.static(Path.join(__dirname, '../public')));
+  //app.set('views', Path.join(__dirname, '../views'));
 }
 
 function configurarServidorNube(){
