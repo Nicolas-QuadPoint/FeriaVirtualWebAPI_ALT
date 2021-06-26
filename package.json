@@ -4,9 +4,7 @@
   "description": "Modificacion de FeriaVirtualAPI para funcionar con otra fuente de datos",
   "main": "app.js",
   "type": "module",
-  "scripts": {
-    "start": "nodemon app.js"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "Nicolas_QuadPoint",
   "license": "MIT",
