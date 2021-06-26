@@ -38,11 +38,7 @@ function VentasRepository(conexion){
         
         try {
 
-            //var objeto = JSON.parse(req.body);
-            
-            //console.log(req.body);
-
-            res.status(501).json( new ex.MethodNotImplementedException() );
+            throw new ex.MethodGoneException();
 
         } catch(e) {
 
@@ -76,11 +72,10 @@ function VentasRepository(conexion){
                 //'tobj_descripcion_producto_venta'
                 var parametros = {
                     p_id_venta:{ name:'p_id_venta', type: ConexionBD.dbTypes.INT, val: venta_id, dir: ConexionBD.dbTypes.IN },
-                    p_info_venta:{ name:'p_info_venta', type: Ora.DB_TYPE_CURSOR, dir: ConexionBD.dbTypes.OUT },
-                    p_lista_productos_venta:{ name:'p_lista_productos_venta', type: Ora.DB_TYPE_CURSOR, dir: ConexionBD.dbTypes.OUT }
+					datos_venta:{ name:'datos_venta', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT},
                 };
 
-                conn.executeStoredProcedure("pkg_venta.proc_get_info_venta",
+                conn.executeStoredProcedure('OBTENER_PROCESO_2_SP',
                 parametros,{},
                 function(e,results){
                     
@@ -100,45 +95,12 @@ function VentasRepository(conexion){
                             
                             if(fila_venta && fila_venta[0]){
 
-                                /**
-                                 * Aquí vemos si podemos ver mas filas de productos!
-                                 * Como no se cuantas filas hay para recuperar, mejor 
-                                 * recupero todas de un zarpaso! El valor de esta funcion 
-                                 * es estimada y por nada del mundo sera sobrepasada!!!
-                                 */
-                                cursor_productos_venta.getRows(65535,function(err,filas_productos){
-
-                                    if(filas_productos){
-
-                                        //console.log(filas_productos);
-                                        
-                                        /**
-                                         * Aquí construyo el objeto de Ventas!!!
-                                         */
-                                        let objetoVenta = new Venta();
-                                        console.log(fila_venta);
-                                        objetoVenta.buildFromArray(fila_venta[0]);
-
-                                        filas_productos.forEach( producto => {
-                                            let nuevoParProductoCantidad = new ParProductoCantidad();
-                                            nuevoParProductoCantidad.buildFromArray(producto);
-                                            objetoVenta.productos_venta.push(nuevoParProductoCantidad);
-                                        });
-
-                                        res.status(200).json(objetoVenta);
-
-                                    } else {
-
-                                        if(err){console.log(err);}
-                                        res.status(404).json(new ex.RecordNotFoundException());
-
-                                    }
-
-                                    /** Cerramos el cursor cursor_productos_venta */
-                                    cursor_productos_venta.close(function(err){});
-
-                                });
-
+                                var ventaObtenida = new ObjetoVentaSimple();
+								ventaObtenida.buildFromArray(fila_venta[0]);
+								
+								res.status(200).json({ venta: ventaObtenida });
+								
+								
                             } else {
 
                                 if(err){console.log(err);}
@@ -198,7 +160,7 @@ function VentasRepository(conexion){
                     usuarioid:{ name:'usuarioid', type: ConexionBD.dbTypes.INT, val: usu_id, dir: ConexionBD.dbTypes.IN }
                 };
 
-                conn.executeQuery("select * from table ( pkg_venta.func_get_all_ventas_usuario(:usuarioid) )",parametros,{},
+                conn.executeQuery('',parametros,{},
                 function(e,results){
                     
                     if(e){
@@ -250,38 +212,66 @@ function VentasRepository(conexion){
 
         try {
             
-            var conn = new ConexionBD();
+            
+			var conn = new ConexionBD();
 
-            conn.executeQuery('select * from table (pkg_venta.func_get_all_ventas_simple() )',{}, 
-            { outFormat : Ora.OUT_FORMAT_ARRAY },
-            function(e,result){
-                
-                if(e){
+			var parametros = {
+				datos_venta:{ name:'datos_venta', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT},
+			};
 
-                    res.status(500).json( new ex.DatabaseErrorException() );
-                    console.error(`Un error!: ${e.message}`);
+			conn.executeStoredProcedure('OBTENER_PROCESO_2_SP',
+			parametros,{},
+			function(e,results){
+				
+				if(e){
 
-                } else if(result && result.rows) {
-                    
-                    var arr_ventas = [];
-                    result.rows.forEach(function(value,index,array){
-                        
-                        var itemVentaSimple = new ObjetoVentaSimple();
-                        itemVentaSimple.buildFromArray(result.rows[index]);
-                        arr_ventas.push(itemVentaSimple);
+					res.status(500).json( new ex.DatabaseErrorException() );
+					console.error(`Un error!: ${e.message}`);
 
-                    });
+				} else if(results && results.outBinds) {
 
-                    
-                    res.status(200).json( { ventas : arr_ventas } );
+					//Recuperamos los cursores!
+					var cursor_info_venta = results.outBinds.datos_venta;
+					var arr_ventas_obtenidas = [];
+					
+					cursor_info_venta.getRows(65535,function(err,fila_venta){
+						
+						if(fila_venta){
 
-                } else {
+							
+							fila_venta.forEach( function( v, index, arr){ 
+								
+								
+								var ventaObtenida = new ObjetoVentaSimple();
+								ventaObtenida.buildFromArray(v);
+								arr_ventas_obtenidas.push(ventaObtenida);
+								
+							});
+							
+							res.status(200).json({ ventas: arr_ventas_obtenidas });
+							
+							
+						} else {
 
-                    res.status(404).json( new ex.RecordNotFoundException() );
+							if(err){console.log(err);}
+							res.status(404).json(new ex.RecordNotFoundException());
 
-                }
+						}
 
-            });
+						/** Cerramos el cursor cursor_info_venta */
+						cursor_info_venta.close(function(err){});
+					});
+
+				} else {
+
+					res.status(404).json( new ex.RecordNotFoundException() );
+
+				}
+
+			});
+
+			
+			
 
         } catch(e) {
 

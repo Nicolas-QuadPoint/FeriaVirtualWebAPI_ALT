@@ -129,12 +129,16 @@ function AuthRepository(conexion){
                             
                                     var u = new Usuario();
                                     u.buildFromArray(fila_usuario[0]);
+									
+									//solo por si acaso!
+									u.contrasena = fila_usuario[0][5];
 
                                     if(BCrypt.compareSync(req.body.contrasena, u.contrasena)){
                                     
 										console.log('Coinciden?');
 										var tokenUsuario = JWT.sign({id:u.id_usuario},process.env.FVWAPI_WEBTOKEN_SECRET_KEY,{expiresIn:84600});
 										console.log({ token_usuario: tokenUsuario, usuario : u });
+										u.contrasena = 'contrasena';
 										res.status(200).json( { token_usuario: tokenUsuario, usuario : u });
 
                                     } else {

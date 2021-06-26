@@ -32,7 +32,7 @@ class Usuario extends Entity{
         this.apellido = arr[2];
         this.email  = arr[3];
         this.rol = (util.isNullOrUndefined( rol_temp ))? Rol.roles[0] : rol_temp;
-        this.contrasena  = arr[5];
+        this.contrasena  = 'contrasena';
         this.id_productor = arr[6];
 
         console.log(rol_temp);

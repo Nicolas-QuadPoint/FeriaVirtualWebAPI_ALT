@@ -164,7 +164,7 @@ function UsuarioRepository(conexion){
      */
     function getUsuario(req,res){
 
-        res.status(200).json(req.data);
+        res.status(200).json({ usuario: req.data });
     }
 
     /**
@@ -262,7 +262,7 @@ function UsuarioRepository(conexion){
 
         try {
 
-            throw new ex.MethodNotImplementedException();
+            throw new ex.MethodGoneException();
 
         } catch(e) {
 
@@ -291,56 +291,11 @@ function UsuarioRepository(conexion){
 
         try {
             
-            var bd = new ConexionBD();
-            var objCambiarContrasena = new ObjetoCambiarContrasena();
-            var p_exito = 0;
-
-            objCambiarContrasena.clone(req.body,true);
-
-            if(!objCambiarContrasena.validate()){
-                throw new ex.InvalidArgumentException();
-            }
-
-            console.log(objCambiarContrasena);
-
-            var parametros = {
-                p_usuario_id :{ name:'p_usuario_id', type: ConexionBD.dbTypes.INT, val: objCambiarContrasena.id_usuario, dir: ConexionBD.dbTypes.IN },
-                p_contrasena :{ name:'p_contrasena', type: ConexionBD.dbTypes.VARCHAR, val: objCambiarContrasena.nueva_contrasena, dir: ConexionBD.dbTypes.IN },
-                exito :{ name:'exito', type: ConexionBD.dbTypes.INT, val: p_exito, dir: ConexionBD.dbTypes.INOUT }
-            };
-
-            bd.executeStoredProcedure('pkg_usuario.proc_cambiar_contrasena_usuario', parametros,
-                { outFormat : Ora.OUT_FORMAT_ARRAY },
-
-                function (e,result) {
-                                            
-                    if(e) { //Hay error?
-
-                        var exception = new ex.DatabaseErrorException();
-                        res.status(exception.code).json(exception);
-                        console.error(`Un error!: ${e.message}`);
-
-                    }
-                    else if(result && result.outBinds){
-
-                        var resultadoid = new ResultadoID();
-                        resultadoid.id_resultado = result.outBinds.exito;
-
-                        res.status(200).json( resultadoid );
-                        
-
-                    } else {
-                        
-                        res.status(404).json( new ex.OperationFailedException() );
-
-                    }
-
-                }    
-            );
+            throw new ex.MethodGoneException();
 
         } catch(e) {
             console.log(e);
-            res.status(401).json( e );
+            res.status(e.code).json( e );
 
         }
 
@@ -362,7 +317,7 @@ function UsuarioRepository(conexion){
 
         try {
 
-            throw new ex.MethodNotImplementedException();
+            throw new ex.MethodGoneException();
 
         } catch(e) {
 
