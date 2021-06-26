@@ -1,7 +1,7 @@
 import express from 'express';
 import Path from 'path';
 import URL from 'url';
-//import DotEnv from 'dotenv';
+import DotEnv from 'dotenv';
 import AuthRoutes from './routes/auth.routes.js';
 import InfoRoutes from './routes/api.public.routes.js';
 import WebRoutes from './routes/web.routes.js';
@@ -15,9 +15,8 @@ const infoRoutes = InfoRoutes();
 const authRoutes = AuthRoutes();
 const puertoServidor = process.env.PORT || 3000;
 
-
 //Configuring enviromental values
-//DotEnv.config();
+DotEnv.config();
 
 function configurarServidorLocal(){
   

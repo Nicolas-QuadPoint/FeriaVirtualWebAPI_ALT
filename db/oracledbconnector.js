@@ -1,12 +1,11 @@
 //Importing modules
 import Ora from 'oracledb';
-//import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import DBConnector from './dbconnector.js';
-
-/*
 
 //Configuring enviromental values
 dotenv.config();
+/*
 //Check for early errors
 if(dotenv.error){
     throw dotenv.error;
@@ -27,8 +26,8 @@ const oraconfig = {
 */
 
 const oraconfig = {
-    user          : process.env.FVWAPI_DB_SERVER,
-    password      : process.env.FVWAPI_DB_USER,
+    user          : process.env.FVWAPI_DB_USER,
+    password      : process.env.FVWAPI_DB_USER_PASSWD,
     connectString : process.env.FVWAPI_DB_SERVER
 };
 
@@ -92,31 +91,38 @@ class OraDBConnector extends DBConnector{
                 var dataset = [];
                 var resultset = 0;
                 var strparams = "";
-                
-                //Iterando por items del objeto
-                //https://attacomsian.com/blog/javascript-iterate-objects
-                for (const key in params) {
-                    strparams = strparams.concat(`:${key},`);
-                }
+				
+				if(e){
+					console.log(`Error en OracleDBConnector!: ${e}`);
+					callback(e,null);
+				} else {
+					
+					//Iterando por items del objeto
+					//https://attacomsian.com/blog/javascript-iterate-objects
+					for (const key in params) {
+						strparams = strparams.concat(`:${key},`);
+					}
 
-                //Quito la coma al final del string en caso de
-                //https://stackoverflow.com/a/36630251
-                strparams = strparams.replace(/.$/,"");                
+					//Quito la coma al final del string en caso de
+					//https://stackoverflow.com/a/36630251
+					strparams = strparams.replace(/.$/,"");                
 
-                console.log(`Params: ${strparams}`);
-                
-                //Se ejecuta la accion
-                //Aqui uso interpolacion de cadenas para simular un tipico bloque de ejecucion
-                //https://www.w3docs.com/snippets/javascript/how-to-do-string-interpolation-in-javascript.html
-                connection.execute(
-                   `BEGIN
-                        ${spName}(${strparams});
-                    END;`,
-                    params,
-                    options,
-                    callback
-                );
-    
+					console.log(`Params: ${strparams}`);
+					
+					//Se ejecuta la accion
+					//Aqui uso interpolacion de cadenas para simular un tipico bloque de ejecucion
+					//https://www.w3docs.com/snippets/javascript/how-to-do-string-interpolation-in-javascript.html
+					connection.execute(
+					   `BEGIN
+							${spName}(${strparams});
+						END;`,
+						params,
+						options,
+						callback
+					);
+						
+				}
+                    
             }
         );
         
@@ -132,21 +138,28 @@ class OraDBConnector extends DBConnector{
                 var dataset = [];
                 var resultset = 0;
                 var strparams = "";
-                
-                //Iterando por items del objeto
-                //https://attacomsian.com/blog/javascript-iterate-objects
-                for (const key in params) {
-                    strparams = strparams.concat(`:${key},`);
-                }
+				
+				if(e){
+					console.log(`Error en OracleDBConnector!: ${e}`);
+					callback(e,null);
+				} else {
+					
+					//Iterando por items del objeto
+					//https://attacomsian.com/blog/javascript-iterate-objects
+					for (const key in params) {
+						strparams = strparams.concat(`:${key},`);
+					}
 
-                //Quito la coma al final del string en caso de
-                //https://stackoverflow.com/a/36630251
-                strparams = strparams.replace(/.$/,"");                
+					//Quito la coma al final del string en caso de
+					//https://stackoverflow.com/a/36630251
+					strparams = strparams.replace(/.$/,"");                
 
-                console.log(`Params: ${strparams}`);
+					console.log(`Params: ${strparams}`);
 
-                //Se ejecuta la accion
-                connection.execute(query,params,options,callback);
+					//Se ejecuta la accion
+					connection.execute(query,params,options,callback);
+					
+				}
     
             }
         );
