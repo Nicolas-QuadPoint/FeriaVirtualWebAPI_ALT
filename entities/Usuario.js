@@ -15,7 +15,7 @@ class Usuario extends Entity{
     nombre = 'Usuario';
     apellido = 'Apellido paterno';
     email  = 'email@domain.cc';
-    tipo = Rol.roles[0];
+    rol = Rol.roles[0];
     contrasena  = 'Contraseña';
     id_productor = 0;
 
@@ -31,7 +31,7 @@ class Usuario extends Entity{
         this.nombre = arr[1];
         this.apellido = arr[2];
         this.email  = arr[3];
-        this.tipo = (util.isNullOrUndefined( rol_temp ))? Rol.roles[0] : rol_temp;
+        this.rol = (util.isNullOrUndefined( rol_temp ))? Rol.roles[0] : rol_temp;
         this.contrasena  = arr[5];
         this.id_productor = arr[6];
 
@@ -47,7 +47,7 @@ class Usuario extends Entity{
             this.nombre = (util.isNullOrUndefined(obj[1]) || !util.isNameValid(this.nombre))? 'Usuario' : obj[1];
             this.apellido = ( util.isNullOrUndefined(obj[2]) || !util.isNameValid(this.apellido) )? 'Apellido paterno': obj[2];
             this.email  = ( util.isNullOrUndefined(obj[3]))? 'email@domain.cc' : obj[3];
-            this.tipo = ( util.isNullOrUndefined(obj[4]) || isNaN(obj[4]) )? 0 : obj[4];
+            this.rol = ( util.isNullOrUndefined(obj[4]) || isNaN(obj[4]) )? 0 : obj[4];
             this.contrasena  = ( util.isNullOrUndefined(obj[5]) )? 'Contraseña' : obj[5];
             this.id_productor = ( util.isNullOrUndefined(obj[6]) || isNaN(obj[6]) )? 0 : obj[6];
             
@@ -58,7 +58,7 @@ class Usuario extends Entity{
             this.nombre = arr[1];
             this.apellido = arr[2];
             this.email  = arr[3];
-            this.tipo = arr[4];
+            this.rol = arr[4];
             this.contrasena  = arr[5];
             this.id_productor = arr[6];
 
@@ -77,7 +77,7 @@ class Usuario extends Entity{
             ( !util.isNullOrUndefined(this.apellido) && util.isNameValid(this.apellido) ) &&
             ( !util.isNullOrUndefined(this.email)) &&
             ( !util.isNullOrUndefined(this.contrasena) ) &&
-            ( !util.isNullOrUndefined(this.tipo) ) &&
+            ( !util.isNullOrUndefined(this.rol) ) &&
             ( !util.isNullOrUndefined(this.id_productor) )
 
         );
