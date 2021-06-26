@@ -15,17 +15,28 @@ const infoRoutes = InfoRoutes();
 const authRoutes = AuthRoutes();
 const puertoServidor = process.env.PORT || 3000;
 
-/* https://stackoverflow.com/a/62892482 */
-const __dirname = URL.fileURLToPath(import.meta.url);
 
 //Configuring enviromental values
 //DotEnv.config();
 
+function configurarServidorLocal(){
+  
+  /* https://stackoverflow.com/a/62892482 */
+  let __dirname = URL.fileURLToPath(import.meta.url);
+  
+  //Public resources - Todo debajo de la carpeta indicada,
+  //sera de acceso publico para el usuario
+  app.use(express.static(Path.join(__dirname, '../public')));
+  app.set('views', Path.join(__dirname, '../views'));
+}
 
-//Public resources - Todo debajo de la carpeta indicada,
-//sera de acceso publico para el usuario
-app.use(express.static(Path.join(__dirname, '../public')));
-app.set('views', Path.join(__dirname, '../views'));
+function configurarServidorNube(){
+  app.use(express.static('./public')));
+  app.set('views','./views'));
+}
+
+
+configurarServidorNube();
 
 //Usamos las cookies
 //app.use(cookieParser());
