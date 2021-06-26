@@ -31,8 +31,8 @@ function configurarServidorLocal(){
 }
 
 function configurarServidorNube(){
-  app.use(express.static('./public')));
-  app.set('views','./views'));
+  app.use(express.static('./public'));
+  app.set('views','./views');
 }
 
 
