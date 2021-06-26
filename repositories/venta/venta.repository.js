@@ -81,7 +81,7 @@ function VentasRepository(conexion){
                     
                     if(e){
 
-                        res.status(500).json( new ex.DatabaseErrorException() );
+                        res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
                         console.error(`Un error!: ${e.message}`);
 
                     } else if(results && results.outBinds) {

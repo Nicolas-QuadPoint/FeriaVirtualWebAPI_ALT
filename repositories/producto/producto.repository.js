@@ -51,8 +51,7 @@ function ProductoRepository(conexion){
                         
                         if(e){
                             
-                            res.status(404).json(new ex.RecordNotFoundException());
-                            console.error(`Un error en getProducto!:${e.message}`);
+                            res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
 
                         } else if(result && result.outBinds) {
                             

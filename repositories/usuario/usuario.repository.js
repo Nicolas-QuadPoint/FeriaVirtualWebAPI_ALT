@@ -93,8 +93,7 @@ function UsuarioRepository(conexion){
                                                 
                         if(e) { //Hay error?
 
-                            var exception = new ex.DatabaseErrorException();
-                            res.status(exception.code).json(exception.message);
+                            res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
                             console.error(`Un error!: ${e.message}`);
 
                         }
