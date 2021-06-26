@@ -83,9 +83,10 @@ function AuthRepository(conexion){
             
             if(req.body.email && req.body.contrasena){
 
-                //console.log( JSON.stringify(req.body) );
+                console.log( JSON.stringify(req.body) );
 
                 var bd = new ConexionBD();
+				var emailUsuario = req.body.email;
                 
                 /*
                 var crearSalt = BCrypt.genSaltSync(10);
@@ -100,11 +101,9 @@ function AuthRepository(conexion){
 
                 var parametros = {
                     
-                    usu_email:{ name:'email', type: ConexionBD.dbTypes.VARCHAR, val: req.body.email, dir: ConexionBD.dbTypes.IN },
-                    datos_usuario:{ name:'datos_usuario', type: OracleDB.DB_TYPE_CURSOR, dir: ConexionBD.dbTypes.OUT }
+                    usu_email:{ name:'email', type: ConexionBD.dbTypes.VARCHAR, val: emailUsuario, dir: ConexionBD.dbTypes.IN },
+                    datos_usuario:{ name:'datos_usuario', type: OracleDB.CURSOR, dir: ConexionBD.dbTypes.OUT }
                 };
-
-                //console.log( JSON.stringify(parametros) );
 
                 bd.executeStoredProcedure('OBTENER_USUARIO_MAIL', parametros,{},
 
@@ -117,22 +116,28 @@ function AuthRepository(conexion){
 
                         } else if(result && result.outBinds){
                             
-
+							console.log(result);
+							console.log(result.outBinds);
+							
                             let cursor_datos_usuario = result.outBinds.datos_usuario;
                             cursor_datos_usuario.getRows(1,function(err,fila_usuario){
                                 
                                 console.log(fila_usuario);
-                                if(fila_usuario[0]){
+								
+								if(err){
+									res.status(500).json(new DatabaseErrorException());
+								}
+                                else if(fila_usuario[0]){
                             
                                     var u = new Usuario();
                                     u.buildFromArray(fila_usuario[0]);
 
                                     if(BCrypt.compareSync(req.body.contrasena, u.contrasena)){
                                     
-                                            console.log('Coinciden?');
-                                            var tokenUsuario = JWT.sign({id:u.id_usuario},process.env.WEBTOKEN_SECRET_KEY,{expiresIn:84600});
-                                            console.log({ token_usuario: tokenUsuario, usuario : u });
-                                            res.status(200).json( { token_usuario: tokenUsuario, usuario : u });
+										console.log('Coinciden?');
+										var tokenUsuario = JWT.sign({id:u.id_usuario},process.env.WEBTOKEN_SECRET_KEY,{expiresIn:84600});
+										console.log({ token_usuario: tokenUsuario, usuario : u });
+										res.status(200).json( { token_usuario: tokenUsuario, usuario : u });
 
                                     } else {
                                         console.log('No coinciden...');
@@ -143,10 +148,11 @@ function AuthRepository(conexion){
 
                                     res.status(401).json(new InvalidCredentialsException());
                                 }
+								
+								cursor_datos_usuario.close(function(err){});
 
                             });
 
-                            cursor_datos_usuario.close(function(err){});
                             
                         } else {
 

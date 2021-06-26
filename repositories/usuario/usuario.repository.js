@@ -242,42 +242,61 @@ function UsuarioRepository(conexion){
         try {
 
             var bd = new ConexionBD();
+			var parametros = {
+				datos_usuario:{name:'datos_usuario', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT }
+			};
 
-            bd.executeQuery('select * from table( pkg_usuario.func_get_all_usuarios() )', {},
-                { outFormat : Ora.OUT_FORMAT_ARRAY },
+            bd.executeStoredProcedure('OBTENER_USUARIO_SP', parametros,{},
 
-                function (e,result) {
-                                            
-                    if(e) { //Hay error?
+				function (e,result) {
 
-                        var exception = new ex.DatabaseErrorException();
-                        res.status(exception.code).json(exception);
-                        console.error(`Un error!: ${e.message}`);
+					if(e) {
 
-                    }
-                    else if(result && result.rows){ //Aquí transformo el resultado a objetos!!
+						console.error("Un error!: %s",e.message);
+						res.status(500).json( new DatabaseErrorException() );
 
-                        var arr_usuarios = [];
-                        result.rows.forEach(function(value,index,array){
+					} else if(result && result.outBinds){
+						
+						let cursor_datos_usuario = result.outBinds.datos_usuario;
+						cursor_datos_usuario.getRows(65535,function(err,filas_usuario){
+							
+							//console.log(fila_usuario);
+							var arr_usuarios = [];
+							
+							if(err){
+								res.status(500).json(new DatabaseErrorException());
+							}
+							else if(filas_usuario[0]){
+								
+								filas_usuario.forEach(function(usu,index,arr){
+									
+									var u = new Usuario();
+									u.buildFromArray(usu);
+									arr_usuarios.push(u);
+									
+								});				
+								
+								res.status(200).json( { usuarios: arr_usuarios } );
 
-                            var u = new Usuario();
-                            u.buildFromArray(result.rows[index]);
+							} else {
 
-                            arr_usuarios.push(u);
+								res.status(401).json(new ex.RecordNotFoundException());
+							}
+							
+							cursor_datos_usuario.close(function(err){});
 
-                        });
+						});
 
-                        res.status(200).json({ usuarios: arr_usuarios } );
-                        
+						
+					} else {
 
-                    } else {
-                        
-                        res.status(404).json( new ex.RecordNotFoundException() );
+						res.status(401).json( new ex.RecordNotFoundException() );
 
-                    }
+					}
 
-                }    
-            );
+				}
+
+			);
 
         } catch(e) {
 

@@ -31,6 +31,15 @@ const oraconfig = {
     connectString : process.env.FVWAPI_DB_SERVER
 };
 
+function describeConnection(connection){
+	console.log(
+	`Objeto connection:
+		Current schema: ${connection.currentSchema}
+		Version: ${connection.oracleServerVersionString}`
+	
+	);
+}
+
 
 /**
  * OraDBConnector
@@ -97,6 +106,8 @@ class OraDBConnector extends DBConnector{
 					callback(e,null);
 				} else {
 					
+					describeConnection(connection);
+					
 					//Iterando por items del objeto
 					//https://attacomsian.com/blog/javascript-iterate-objects
 					for (const key in params) {
@@ -107,7 +118,7 @@ class OraDBConnector extends DBConnector{
 					//https://stackoverflow.com/a/36630251
 					strparams = strparams.replace(/.$/,"");                
 
-					console.log(`Params: ${strparams}`);
+					//console.log(`Params: ${strparams}`);
 					
 					//Se ejecuta la accion
 					//Aqui uso interpolacion de cadenas para simular un tipico bloque de ejecucion
