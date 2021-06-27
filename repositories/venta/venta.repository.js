@@ -19,6 +19,270 @@ import ParProductoCantidad from '../../entities/ParProductoCantidad.js';
 function VentasRepository(conexion){
     
     /* Metodos de clase */
+    function internalGetVentasDe(req,res,nombre_proc='OBTENER_PROCESO_2_SP'){
+        
+        try {
+            
+			var conn = new ConexionBD();
+
+			var parametros = {
+				datos_venta:{ name:'datos_venta', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT},
+			};
+
+			conn.executeStoredProcedure(nombre_proc,
+			parametros,{},
+			function(e,results){
+				
+				if(e){
+
+					res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
+                    console.log(e);
+
+				} else if(results && results.outBinds) {
+
+					//Recuperamos los cursores!
+					var cursor_info_venta = results.outBinds.datos_venta;
+					var arr_ventas_obtenidas = [];
+					
+					cursor_info_venta.getRows(65535,function(err,fila_venta){
+						
+                        if(err){
+                            res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
+                            console.log(e);
+                        }
+						else if(fila_venta && fila_venta[0]){
+
+							
+							fila_venta.forEach( function( v, index, arr){ 
+								
+								
+								var ventaObtenida = new ObjetoVentaSimple();
+								ventaObtenida.buildFromArray(v);
+								arr_ventas_obtenidas.push(ventaObtenida);
+								
+							});
+							
+							res.status(200).json({ ventas: arr_ventas_obtenidas });
+							
+							
+						} else {
+
+							if(err){console.log(err);}
+							res.status(404).json(new ex.RecordNotFoundException());
+
+						}
+
+						/** Cerramos el cursor cursor_info_venta */
+						cursor_info_venta.close(function(err){});
+					});
+
+				} else {
+
+					res.status(404).json( new ex.RecordNotFoundException() );
+
+				}
+
+			});
+
+			
+			
+
+        } catch(e) {
+
+            res.status(500).json( e );
+            console.error(e);
+
+        }
+    }
+
+    function internalGetVentaSimple(req,res){
+        
+        try {
+
+            var venta_id = Number(req.params.ventaid);
+
+            if(req.params.ventaid && !isNaN(venta_id)){ 
+
+                var conn = new ConexionBD();
+
+                //'tobj_descripcion_producto_venta'
+                var parametros = {
+                    p_id_venta:{ name:'p_id_venta', type: ConexionBD.dbTypes.INT, val: venta_id, dir: ConexionBD.dbTypes.IN },
+					datos_venta:{ name:'datos_venta', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT},
+                };
+
+                conn.executeStoredProcedure('OBTENER_PROCESO_2_SP',
+                parametros,{},
+                function(e,results){
+                    
+                    if(e){
+
+                        res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
+                        console.error(`Un error!: ${e.message}`);
+
+                    } else if(results && results.outBinds) {
+
+                        //Recuperamos los cursores!
+                        var cursor_info_venta = results.outBinds.datos_venta;
+						var ventaObtenida = new ObjetoVentaSimple();
+                        
+                        //Este cursor SIEMPRE tendrá una fila!
+                        cursor_info_venta.getRows(1,function(err,fila_venta){
+                            
+							if(err){
+								
+								res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
+								
+							} else if(fila_venta && fila_venta[0]){
+  
+								ventaObtenida.buildFromArray(fila_venta[0]);
+									
+                                res.status(200).json({ 
+                                    venta: ventaObtenida
+                                });								
+								
+                            } else {
+
+                                if(err){console.log(err);}
+                                res.status(404).json(new ex.RecordNotFoundException());
+
+                            }
+
+                            /** Cerramos el cursor cursor_info_venta */
+                            cursor_info_venta.close(function(err){});
+                        });
+
+                    } else {
+
+                        res.status(404).json( new ex.RecordNotFoundException() );
+
+                    }
+
+                });
+
+
+            } else {
+
+                res.status(400).json( new ex.InvalidArgumentException() );
+
+            }
+
+        } catch(e) {
+
+            res.status(500).json( e );
+
+        }
+
+
+    }
+
+    function internalGetVentaDetallada(req,res){
+
+        try {
+
+            var venta_id = Number(req.params.ventaid);
+
+            if(req.params.ventaid && !isNaN(venta_id)){ 
+
+                var conn = new ConexionBD();
+
+                //'tobj_descripcion_producto_venta'
+                var parametros = {
+                    p_id_venta:{ name:'p_id_venta', type: ConexionBD.dbTypes.INT, val: venta_id, dir: ConexionBD.dbTypes.IN },
+					datos_venta:{ name:'datos_venta', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT},
+					datos_productos_venta:{ name:'datos_productos_venta', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT},
+                };
+
+                conn.executeStoredProcedure('OBTENER_DETALLE_PROCESO_2_PRODUCTOR_SP',
+                parametros,{},
+                function(e,results){
+                    
+                    if(e){
+
+                        res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
+                        console.error(`Un error!: ${e.message}`);
+
+                    } else if(results && results.outBinds) {
+
+                        //Recuperamos los cursores!
+                        var cursor_info_venta = results.outBinds.datos_venta;
+						var cursor_productos = results.outBinds.datos_productos_venta;
+						var ventaObtenida = new ObjetoVentaSimple();
+						var lista_productos = [];
+                        
+                        //Este cursor SIEMPRE tendrá una fila!
+                        cursor_info_venta.getRows(1,function(err,fila_venta){
+                            
+							if(err){
+								
+								res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
+								
+							} else if(fila_venta && fila_venta[0]){
+  
+								ventaObtenida.buildFromArray(fila_venta[0]);
+								
+								cursor_productos.getRows(65535,function(err,filas_productos){
+									
+									if(err){
+										
+										res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
+										
+									} else if (filas_productos){
+										
+										filas_productos.forEach( function(p, index, arr){									
+										
+											var productoNuevo = new Producto();
+											productoNuevo.buildFromArray(p);
+											lista_productos.push(productoNuevo);
+										
+										});
+										
+									}
+									
+									res.status(200).json({ 
+										venta: ventaObtenida,
+										productos: lista_productos
+									});
+									
+									/** Cerramos el cursor cursor_info_venta */
+									cursor_productos.close(function(err){});
+								});
+								
+								
+                            } else {
+
+                                if(err){console.log(err);}
+                                res.status(404).json(new ex.RecordNotFoundException());
+
+                            }
+
+                            /** Cerramos el cursor cursor_info_venta */
+                            cursor_info_venta.close(function(err){});
+                        });
+
+                    } else {
+
+                        res.status(404).json( new ex.RecordNotFoundException() );
+
+                    }
+
+                });
+
+
+            } else {
+
+                res.status(400).json( new ex.InvalidArgumentException() );
+
+            }
+
+        } catch(e) {
+
+            res.status(500).json( e );
+
+        }
+
+
+    }
 
     /**
      * 
@@ -61,78 +325,26 @@ function VentasRepository(conexion){
      */
     function getVenta(req,res){
        
-        try {
+        if(req.query.formato === 'detallado'){
+            
+            internalGetVentaDetallada(req,res);
 
-            var venta_id = Number(req.params.ventaid);
+        } else if(req.query.formato === 'simple' ) {
+            
+            internalGetVentaSimple(req,res);
 
-            if(req.params.ventaid && !isNaN(venta_id)){ 
+        } else {
 
-                var conn = new ConexionBD();
-
-                //'tobj_descripcion_producto_venta'
-                var parametros = {
-                    p_id_venta:{ name:'p_id_venta', type: ConexionBD.dbTypes.INT, val: venta_id, dir: ConexionBD.dbTypes.IN },
-					datos_venta:{ name:'datos_venta', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT},
-                };
-
-                conn.executeStoredProcedure('OBTENER_PROCESO_2_SP',
-                parametros,{},
-                function(e,results){
-                    
-                    if(e){
-
-                        res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
-                        console.error(`Un error!: ${e.message}`);
-
-                    } else if(results && results.outBinds) {
-
-                        //Recuperamos los cursores!
-                        var cursor_info_venta = results.outBinds.p_info_venta;
-                        var cursor_productos_venta = results.outBinds.p_lista_productos_venta;
-                        
-                        //Este cursor SIEMPRE tendrá una fila!
-                        cursor_info_venta.getRows(1,function(err,fila_venta){
-                            
-                            if(fila_venta && fila_venta[0]){
-
-                                var ventaObtenida = new ObjetoVentaSimple();
-								ventaObtenida.buildFromArray(fila_venta[0]);
-								
-								res.status(200).json({ venta: ventaObtenida });
-								
-								
-                            } else {
-
-                                if(err){console.log(err);}
-                                res.status(404).json(new ex.RecordNotFoundException());
-
-                            }
-
-                            /** Cerramos el cursor cursor_info_venta */
-                            cursor_info_venta.close(function(err){});
-                        });
-
-                    } else {
-
-                        res.status(404).json( new ex.RecordNotFoundException() );
-
-                    }
-
-                });
-
-
-            } else {
-
-                res.status(400).json( new ex.InvalidArgumentException() );
-
-            }
-
-        } catch(e) {
-
-            res.status(500).json( e );
+            res.status(401).json( new ex.InvalidArgumentException() );
 
         }
 
+    }
+
+    function getHistorialVentas(req,res){
+        
+        console.log('Paso por aqui??');
+        internalGetVentasDe(req,res,'OBTENER_HISTORIAL_PROCESOS_2_SP');
     }
 
     /**
@@ -210,74 +422,18 @@ function VentasRepository(conexion){
      */
     function getVentas(req,res){
 
-        try {
-            
-            
-			var conn = new ConexionBD();
+        var procedimientoALlamar;
 
-			var parametros = {
-				datos_venta:{ name:'datos_venta', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT},
-			};
-
-			conn.executeStoredProcedure('OBTENER_PROCESO_2_SP',
-			parametros,{},
-			function(e,results){
-				
-				if(e){
-
-					res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
-
-				} else if(results && results.outBinds) {
-
-					//Recuperamos los cursores!
-					var cursor_info_venta = results.outBinds.datos_venta;
-					var arr_ventas_obtenidas = [];
-					
-					cursor_info_venta.getRows(65535,function(err,fila_venta){
-						
-						if(fila_venta){
-
-							
-							fila_venta.forEach( function( v, index, arr){ 
-								
-								
-								var ventaObtenida = new ObjetoVentaSimple();
-								ventaObtenida.buildFromArray(v);
-								arr_ventas_obtenidas.push(ventaObtenida);
-								
-							});
-							
-							res.status(200).json({ ventas: arr_ventas_obtenidas });
-							
-							
-						} else {
-
-							if(err){console.log(err);}
-							res.status(404).json(new ex.RecordNotFoundException());
-
-						}
-
-						/** Cerramos el cursor cursor_info_venta */
-						cursor_info_venta.close(function(err){});
-					});
-
-				} else {
-
-					res.status(404).json( new ex.RecordNotFoundException() );
-
-				}
-
-			});
-
-			
-			
-
-        } catch(e) {
-
-            res.status(500).json( e );
-            console.error(e);
-
+        if(req.query.tipo === 'transportistas'){
+            procedimientoALlamar = 'OBTENER_PROCESO_2_TRANSPORTISTA_SP';
+            console.log('es transportista');
         }
+        else if(req.query.tipo === 'productores'){
+            procedimientoALlamar = 'OBTENER_PROCESO_2_PRODUCTOR_SP';
+            console.log('es productor');
+        }
+
+        internalGetVentasDe(req,res,procedimientoALlamar);
 
     }
 
@@ -313,7 +469,8 @@ function VentasRepository(conexion){
         getVenta,
         getVentas,
         updateVenta,
-        getVentasPorUsuario
+        getVentasPorUsuario,
+        getHistorialVentas
     };
 }
 

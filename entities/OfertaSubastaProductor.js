@@ -2,20 +2,25 @@ import Entity from './Entity.js';
 import Subasta from './Subasta.js';
 import Producto from './Producto.js';
 import Productor from './Productor.js';
+import TipoVenta from './TipoVenta.js';
 
 class OfertaSubastaProductor extends Entity{
 
-    id_subasta_productor = 0;
-    unidades_producto = 0;
-    precio_unidad = 0;
+    id_venta = 0;
     producto = new Producto();
-    productor = new Productor();
-    seleccionado = false;
-    subasta = new Subasta();
+    cantidad = 0;
+    tipoVenta = new TipoVenta();
 
     constructor(){
         super();
     }
+	
+	buildFromArray(arr=[]){
+		
+        
+		
+		
+	}
 
 }
 

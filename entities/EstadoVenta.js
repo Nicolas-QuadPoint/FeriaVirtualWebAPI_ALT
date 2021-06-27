@@ -24,6 +24,7 @@ class EstadoVenta extends Entity{
         }
 
     }
+
 }
 
 export default EstadoVenta;

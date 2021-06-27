@@ -38,6 +38,10 @@ export default function(objetoRouter){
     objetoRouter.route('/ventas')
         .get(ventasRepository.getVentas);
 
+    objetoRouter.route('/ventas/historial')
+        .get(ventasRepository.getHistorialVentas);
+
+
     objetoRouter.route('/ventas/nuevo')
         .post(ventasRepository.nuevaVenta);
     

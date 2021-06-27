@@ -106,7 +106,7 @@ class OraDBConnector extends DBConnector{
 					callback(e,null);
 				} else {
 					
-					describeConnection(connection);
+					//describeConnection(connection);
 					
 					//Iterando por items del objeto
 					//https://attacomsian.com/blog/javascript-iterate-objects
