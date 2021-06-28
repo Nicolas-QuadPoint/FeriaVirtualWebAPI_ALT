@@ -16,6 +16,11 @@ export default function(objetoRouter){
 
     const subastaRepository = _subastaRepository();
 
+
+    objetoRouter.route('/subastas/productor/:idproductor/productos')
+    .get(subastaRepository.getProductosProductor);
+
+
     /* Método que se interpone entre las peticiones a esta url, para evaluar  */
     objetoRouter.use('/subastas/:idsubasta', subastaRepository.interceptarSubasta);
     
@@ -23,8 +28,11 @@ export default function(objetoRouter){
     objetoRouter.route('/subastas/:idsubasta')
         .get(subastaRepository.getInfoSubasta);
     
-    objetoRouter.route('/subastas/:idsubasta/productor')
+    objetoRouter.route('/subastas/:idsubasta/productor/:idproductor/pujas')
         .get(subastaRepository.getPujasSubastaProductor);
+
+    objetoRouter.route('/subastas/:idsubasta/productos')
+        .get(subastaRepository.getTodosLasPujasSubasta);
 
     objetoRouter.route('/subastas/:idsubasta/transportista')
         .get(subastaRepository.getPujasSubastaTransportista);
@@ -40,11 +48,12 @@ export default function(objetoRouter){
     /* Mantención */
     objetoRouter.route('/subastas/:idsubasta/productor/puja')
         .post(subastaRepository.pujarSubastaProductor)
+        .put(subastaRepository.modificarPujaProductor)
         .delete(subastaRepository.removerPujaSubastaProductor);
     
 
-    objetoRouter.route('/subastas/:idsubasta/transportista/puja')
-        .post(subastaRepository.pujarSubastaTransportista)
-        .delete(subastaRepository.removerPujaSubastaTransportista);
+    objetoRouter.route('/subastas/:idsubasta/transportista/transporte')
+        .post(subastaRepository.transportarEncargoProductos)
+        .put(subastaRepository.finalizarTransporte);
     
 }

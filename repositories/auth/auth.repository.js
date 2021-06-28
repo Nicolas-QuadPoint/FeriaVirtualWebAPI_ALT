@@ -4,7 +4,8 @@ import { DatabaseErrorException,
     InvalidCredentialsException, 
     Exception, 
     MethodNotImplementedException, 
-    RecordNotFoundException } 
+    RecordNotFoundException, 
+    MethodGoneException} 
     from '../../info/exceptions/exceptions.js';
 
 import BCrypt from 'bcryptjs';
@@ -202,7 +203,7 @@ function AuthRepository(conexion){
 
         try {
 
-            throw new MethodNotImplementedException();
+            throw new MethodGoneException();
 
         } catch(e) {
 

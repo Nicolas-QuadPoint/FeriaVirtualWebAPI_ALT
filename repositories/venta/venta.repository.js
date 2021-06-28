@@ -101,7 +101,7 @@ function VentasRepository(conexion){
 
             var venta_id = Number(req.params.ventaid);
 
-            if(req.params.ventaid && !isNaN(venta_id)){ 
+            if(!isNaN(venta_id)){ 
 
                 var conn = new ConexionBD();
 
@@ -137,9 +137,7 @@ function VentasRepository(conexion){
   
 								ventaObtenida.buildFromArray(fila_venta[0]);
 									
-                                res.status(200).json({ 
-                                    venta: ventaObtenida
-                                });								
+                                res.status(200).json(ventaObtenida);								
 								
                             } else {
 
@@ -182,7 +180,7 @@ function VentasRepository(conexion){
 
             var venta_id = Number(req.params.ventaid);
 
-            if(req.params.ventaid && !isNaN(venta_id)){ 
+            if(!isNaN(venta_id)){ 
 
                 var conn = new ConexionBD();
 
@@ -333,6 +331,10 @@ function VentasRepository(conexion){
             
             internalGetVentaSimple(req,res);
 
+        } else if(req.query){
+
+            internalGetVentaSimple(req,res);
+        
         } else {
 
             res.status(401).json( new ex.InvalidArgumentException() );
@@ -364,7 +366,7 @@ function VentasRepository(conexion){
 
             var usu_id = Number(req.params.usuarioid);
 
-            if(req.params.usuarioid && !isNaN(usu_id)){
+            if(!isNaN(usu_id)){
 
                 var conn = new ConexionBD();
 
