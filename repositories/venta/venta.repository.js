@@ -426,7 +426,7 @@ function VentasRepository(conexion){
 
         var procedimientoALlamar;
 
-        if(req.query.tipo === 'transportistas'){
+        if(req.query.tipo === 'transportistas') {
             procedimientoALlamar = 'OBTENER_PROCESO_2_TRANSPORTISTA_SP';
             console.log('es transportista');
         }

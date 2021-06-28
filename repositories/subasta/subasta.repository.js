@@ -1,7 +1,7 @@
 import ConexionBD from '../../db/oracledbconnector.js';
 import utility from '../../utilities/utilities.js';
 import genericResponse from '../../shared/response.js';
-import ex from '../../info/exceptions/exceptions.js';
+import ex, { DatabaseErrorException, InvalidArgumentException } from '../../info/exceptions/exceptions.js';
 import ObjetoVentaSimple from '../../entities/ObjetoVentaSimple.js';
 import OfertaSubastaProductor from '../../entities/OfertaSubastaProductor.js';
 import OfertaSubastaTransportista from '../../entities/OfertaSubastaTransportista.js';
@@ -607,10 +607,36 @@ import Producto from '../../entities/Producto.js';
     
     function transportarEncargoProductos(req,res){
         try{
+            
+            var idSubasta = Number(req.params.idsubasta);
+            
+            if(!isNaN(idSubasta)){
+
+                var conn = new ConexionBD();
+                var parametros = {
+                    id_subasta : { name : 'id_subasta',val : idSubasta ,type : ConexionBD.dbTypes.INT }
+                };
+                
+                conn.executeStoredProcedure('transportar_encargo_2',parametros,{autoCommit:true},function(e,result){
+                    
+                    if(e){
+                        res.status(500).json({ oraError : e.message, exception : new DatabaseErrorException() });
+                    } else {
+                        res.status(200).json({ id_resultado : (result? 1 : 0) });
+                    }
+
+                });
+
+            } else {
+
+                res.status(401).json(new InvalidArgumentException());
+
+            }
 
 
         }catch(e){
-            res.status(404).json(e);
+            res.status(500).json(e);
+            console.log('Oh, un error! '+ e);
         }
     }
 
