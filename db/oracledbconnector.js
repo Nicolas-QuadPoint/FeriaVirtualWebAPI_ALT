@@ -26,9 +26,9 @@ const oraconfig = {
 */
 
 const oraconfig = {
-    user          : process.env.FVWAPI_DB_USER,
-    password      : process.env.FVWAPI_DB_USER_PASSWD,
-    connectString : process.env.FVWAPI_DB_SERVER
+    user          : process.env.FVWAPI_DB_USER_PROD,
+    password      : process.env.FVWAPI_DB_USER_PASSWD_PROD,
+    connectString : process.env.FVWAPI_DB_SERVER_PROD
 };
 
 function describeConnection(connection){
