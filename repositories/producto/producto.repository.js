@@ -51,7 +51,7 @@ function ProductoRepository(conexion){
                         
                         if(e){
                             
-                            res.status(500).json( { oraError : e, objErrorAPI: new ex.DatabaseErrorException()} );
+                            res.status(500).json( { oraError : e, mess: e.message, objErrorAPI: new ex.DatabaseErrorException()} );
 
                         } else if(result && result.outBinds) {
                             
