@@ -24,8 +24,11 @@ import Producto from '../../entities/Producto.js';
  function SubastasRepository(conexion){
 
     function interceptarSubasta(req,res,next){
+
         try {
-			
+            
+            console.log('Pasando por interceptor de subastas!');
+
             var idSubasta = Number(req.params.idsubasta);
 
             if(!isNaN(idSubasta)){ 
@@ -557,12 +560,11 @@ import Producto from '../../entities/Producto.js';
 
     }
     
-    function finalizarTransporte(req,res){
+    function finalizarEncargoProductos(req,res){
         
         try{
 			
-			var venta_id = Number(req.params.ventaid);
-			var pujaProductor = new OfertaSubastaTransportista();
+			var venta_id = Number(req.data.subasta.id_venta);
 
             if(!isNaN(venta_id)){ 
 
@@ -570,13 +572,11 @@ import Producto from '../../entities/Producto.js';
 
                 //'tobj_descripcion_producto_venta'
                 var parametros = {
-                    p_id_venta:{ name:'p_id_venta', type: ConexionBD.dbTypes.INT, val: venta_id, dir: ConexionBD.dbTypes.IN },
-					datos_venta:{ name:'datos_venta', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT},
-					datos_productos_venta:{ name:'datos_productos_venta', type: Ora.CURSOR, dir: ConexionBD.dbTypes.OUT}
+                    p_id_venta:{ name:'p_id_venta', type: ConexionBD.dbTypes.INT, val: venta_id, dir: ConexionBD.dbTypes.IN }
                 };
 
-                conn.executeStoredProcedure('OBTENER_DETALLE_PROCESO_2_PRODUCTOR_SP',
-                parametros,{},
+                conn.executeStoredProcedure('finalizar_transporte_encargo_2',
+                parametros,{autoCommit:true},
                 function(e,results){
                     
                     if(e){
@@ -586,7 +586,7 @@ import Producto from '../../entities/Producto.js';
 
 					} else {
 						
-						res.status(200).json( { resultado: 1 } );
+						res.status(200).json( { id_resultado: 1 } );
 						
 					}
 					
@@ -608,7 +608,7 @@ import Producto from '../../entities/Producto.js';
     function transportarEncargoProductos(req,res){
         try{
             
-            var idSubasta = Number(req.params.idsubasta);
+            var idSubasta = Number(req.data.subasta.id_venta);
             
             if(!isNaN(idSubasta)){
 
@@ -656,7 +656,7 @@ import Producto from '../../entities/Producto.js';
         pujarSubastaProductor,
         modificarPujaProductor,
         removerPujaSubastaProductor,
-        finalizarTransporte,
+        finalizarEncargoProductos,
         transportarEncargoProductos
     };
 }

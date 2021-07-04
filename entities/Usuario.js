@@ -1,7 +1,6 @@
 import Entity from './Entity.js';
 import EstadoContrato from './EstadoContrato.js';
 import EstadoUsuario from './EstadoUsuario.js';
-import Nacionalidad from './Nacionalidad.js';
 import Rol from './Rol.js';
 
 import util from '../utilities/utilities.js';

@@ -1,10 +1,7 @@
-import ClienteExterno from './ClienteExterno.js';
 import EstadoContrato from './EstadoContrato.js';
 import EstadoSubasta from './EstadoSubasta.js';
 import EstadoUsuario from './EstadoUsuario.js';
 import EstadoVenta from './EstadoVenta.js';
-import Minorista from './Minorista.js';
-import Nacionalidad from './Nacionalidad.js';
 import OfertaSubastaProductor from './OfertaSubastaProductor.js';
 import OfertaSubastaTransportista from './OfertaSubastaTransportista.js';
 import ParClaveValor from './ParClaveValor.js';
@@ -22,13 +19,10 @@ import Venta from './Venta.js';
 
 
 export default {
-    ClienteExterno,
     EstadoContrato,
     EstadoSubasta,
     EstadoUsuario,
     EstadoVenta,
-    Minorista,
-    Nacionalidad,
     OfertaSubastaProductor,
     OfertaSubastaTransportista,
     ParClaveValor,

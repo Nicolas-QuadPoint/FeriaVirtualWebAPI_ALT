@@ -2,7 +2,6 @@ import Entity from './Entity.js';
 import Usuario from './Usuario.js';
 import EstadoVenta from './EstadoVenta.js';
 import TipoVenta from './TipoVenta.js';
-import ModoPago from './ModoPago.js';
 import ParProductoCantidad from './ParProductoCantidad.js';
 
 class Venta extends Entity{
@@ -16,7 +15,6 @@ class Venta extends Entity{
     estado_venta = new EstadoVenta();
     usuario_autor = new Usuario();
     tipo_venta = new TipoVenta();
-    modo_pago = new ModoPago();
     productos_venta = [];
 
     constructor(){
@@ -40,8 +38,6 @@ class Venta extends Entity{
         this.tipo_venta = new TipoVenta();
         this.tipo_venta.id_tipo_venta = arr[10];
         this.tipo_venta.descripcion = arr[11];
-        this.modo_pago = new ModoPago();
-        this.modo_pago.id_modo_pago = arr[12];
         this.modo_pago.descripcion = arr[13];
         
     }

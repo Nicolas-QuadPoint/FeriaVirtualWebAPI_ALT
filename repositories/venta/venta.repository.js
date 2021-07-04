@@ -1,7 +1,7 @@
 import ConexionBD from '../../db/oracledbconnector.js';
 import utility from '../../utilities/utilities.js';
 import genericResponse from '../../shared/response.js';
-import ex from '../../info/exceptions/exceptions.js';
+import ex, { InvalidArgumentException } from '../../info/exceptions/exceptions.js';
 import ObjetoVentaSimple from '../../entities/ObjetoVentaSimple.js';
 import Venta from '../../entities/Venta.js';
 import Ora from 'oracledb';
@@ -434,7 +434,10 @@ function VentasRepository(conexion){
             procedimientoALlamar = 'OBTENER_PROCESO_2_PRODUCTOR_SP';
             console.log('es productor');
         }
-
+        else {
+            res.status(401).json(new InvalidArgumentException());
+        }
+        
         internalGetVentasDe(req,res,procedimientoALlamar);
 
     }

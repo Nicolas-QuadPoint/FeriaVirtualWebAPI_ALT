@@ -54,6 +54,6 @@ export default function(objetoRouter){
 
     objetoRouter.route('/subastas/:idsubasta/transportista/transporte')
         .post(subastaRepository.transportarEncargoProductos)
-        .put(subastaRepository.finalizarTransporte);
+        .put(subastaRepository.finalizarEncargoProductos);
     
 }

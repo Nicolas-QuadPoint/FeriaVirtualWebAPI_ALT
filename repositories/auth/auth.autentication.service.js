@@ -52,10 +52,9 @@ function checkAutenticatedToken(req,res,next){
      * TODO: Solo des-comentar cuando se requiera depurar los métodos de la API
      * sin necesidad de autenticarse con la misma!!!
      */
-    next();
-    console.log('Autenticando el token!!');
-    return;
-    
+    //next();
+    //console.log('Autenticando el token!!');
+    //return;    
 
     if(token){
 
