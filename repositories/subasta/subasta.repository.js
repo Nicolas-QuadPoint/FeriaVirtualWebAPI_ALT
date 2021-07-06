@@ -69,6 +69,7 @@ import Producto from '../../entities/Producto.js';
                                 });
 
                                 req.data = {subasta : subastaEncontrada};
+								console.log(req.data);
                                 next();
 
                             }
@@ -192,8 +193,8 @@ import Producto from '../../entities/Producto.js';
     function getTodosLasPujasSubasta(req,res){
 
         try {
-
-            var idsubasta = Number(req.params.idsubasta);
+			console.log(req.data);
+            var idsubasta = Number(req.data.subasta.id_venta);
             console.log(idsubasta);
             if(!isNaN(idsubasta)){
 
@@ -231,7 +232,7 @@ import Producto from '../../entities/Producto.js';
                                     productosEncontrados.push(p);
 
                                 });
-
+								console.log({ pujas : productosEncontrados});
                                 res.status(200).json( { pujas : productosEncontrados} );
 
                             }
