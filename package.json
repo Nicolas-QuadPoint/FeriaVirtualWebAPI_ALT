@@ -2,7 +2,7 @@
   "name": "feriavirtual-api-alt",
   "version": "1.0.0",
   "description": "Modificacion de FeriaVirtualAPI para funcionar con otra fuente de datos",
-  "main": "app.js",
+  "main": "app/app.js",
   "type": "module",
   "scripts": {},
   "keywords": [],
